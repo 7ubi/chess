@@ -22,6 +22,51 @@ rook_black = pygame.image.load(os.path.join('data', 'rook_black.png'))
 rook_white = pygame.image.load(os.path.join('data', 'rook_white.png')) 
 
 class Rook:
-    def __init__(self, color):
+    def __init__(self, color, x, y, w, h):
         self.color = color
+        self.x = x
+        self.y = y
+        self.selected = False
+        self.w = int(w)
+        self.h = int(h)
+
+    def setSelected(self, set):
+    	self.selected = set
+
+    def clickedOn(self, pos):
+    	x, y = pos
+    	if x > self.x and x < self.x + self.w and y > self.y and y < self.y + self.h:
+    		return True
+    	return False
+
+    def check(self, x, y):
+    	if self.x == x or self.y == y:
+    		return True
+    	return False
+
+    def move(self, pos):
+    	nx, ny = pos
+    	if self.selected:
+    		x = int(nx / self.w) * self.w
+    		y = int(ny / self.h) * self.h
+    		
+    		canBePlaced = self.check(x, y)
+
+    		if canBePlaced:
+    			self.x = x
+    			self.y = y
+
+
+
+    def show(self, screen, width, height):
+    	if self.selected:
+    		pygame.draw.rect(screen, pygame.Color(255, 0, 0), (self.x, self.y, self.w, self.h))
+
+
+    	if self.color == 'black':
+    		screen.blit(pygame.transform.scale(rook_black, (self.w, self.h)), (self.x, self.y))
+
+
+
+
         
