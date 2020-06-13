@@ -44,13 +44,16 @@ class Rook:
     		return True
     	return False
 
-    def move(self, pos):
+    def move(self, pos, field, width, height):
     	nx, ny = pos
     	if self.selected:
     		x = int(nx / self.w) * self.w
     		y = int(ny / self.h) * self.h
     		
     		canBePlaced = self.check(x, y)
+
+    		if field[int(x / width * 8)][int(y / height * 8)] == self.color:
+    			return
 
     		if canBePlaced:
     			self.x = x
@@ -63,8 +66,11 @@ class Rook:
     		pygame.draw.rect(screen, pygame.Color(255, 0, 0), (self.x, self.y, self.w, self.h))
 
 
-    	if self.color == 'black':
+    	if self.color == 1:
     		screen.blit(pygame.transform.scale(rook_black, (self.w, self.h)), (self.x, self.y))
+
+    	if self.color == -1:
+    		screen.blit(pygame.transform.scale(rook_white, (self.w, self.h)), (self.x, self.y))
 
 
 
