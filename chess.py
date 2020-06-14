@@ -16,12 +16,17 @@ rook_black = [Rook(1, 0, 0, width/8, height/8), Rook(1, 7 * width/8, 0, width / 
 
 rook_white = [Rook(-1, 0, 7 * height / 8, width/8, height/8), Rook(-1, 7 * width / 8, 7 * height / 8, width/8, height/8)]
 
+turn = -1
+
 def defPlayingField(): #black = 1 white = -1 nothing = 0
     global field
     field = [[0 for x in range(8)] for y in range(8)]
 
     for i in range(len(rook_black)):
         field[int(rook_black[i].x / width * 8)][int(rook_black[i].y / height * 8)] = 1
+
+    for i in range(len(rook_white)):
+        field[int(rook_white[i].x / width * 8)][int(rook_white[i].y / height * 8)] = -1
 
 def drawBoard():
     for i in range(8):
@@ -40,49 +45,77 @@ def deselectAll(c):
         for i in range(len(rook_white)):
             rook_white[i].setSelected(False)
 
+def takesBlack(x, y):
+    for i in range(len(rook_black)):
+        if int(x) == rook_black[i].x and int(y) == rook_black[i].y:
+            rook_black.remove(rook_black[i])
+            turn = 1
+            return
+
+def takesWhite(x, y):
+    for i in range(len(rook_white)):
+        if int(x) == rook_white[i].x and int(y) == rook_white[i].y:
+            rook_white.remove(rook_white[i])
+            turn = -1
+            return
 
 def main():
+    turn = -1
     while True:
         defPlayingField()
-        # print(field)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
             if event.type == pygame.MOUSEBUTTONUP:
-                for i in range(len(rook_black)):
-                    if rook_black[i].clickedOn(pygame.mouse.get_pos()):
-                        deselectAll('black')
-                        rook_black[i].setSelected(True)
-
-                    x, y = pygame.mouse.get_pos()
-                    w, h = width/8, height/8
-                    x = int(x / w) * w
-                    y = int(y / h) * h
-
-                    if rook_black[i].selected:
-                        if rook_black[i].x != x or rook_black[i].y != y:
-
-                            rook_black[i].move(pygame.mouse.get_pos(), field, width, height)
+                if turn == 1:
+                    for i in range(len(rook_black)):
+                        if rook_black[i].clickedOn(pygame.mouse.get_pos()):
                             deselectAll('black')
-                for i in range(len(rook_white)):
-                    if rook_white[i].clickedOn(pygame.mouse.get_pos()):
-                        deselectAll('white')
-                        rook_white[i].setSelected(True)
+                            rook_black[i].setSelected(True)
+                        x, y = pygame.mouse.get_pos()
+                        w, h = width/8, height/8
+                        x = int(x / w) * w
+                        y = int(y / h) * h
 
-                    x, y = pygame.mouse.get_pos()
-                    w, h = width/8, height/8
-                    x = int(x / w) * w
-                    y = int(y / h) * h
+                        if rook_black[i].selected:
+                            if rook_black[i].x != x or rook_black[i].y != y:
 
-                    if rook_white[i].selected:
-                        if rook_white[i].x != x or rook_white[i].y != y:
+                                rook_black[i].move(pygame.mouse.get_pos(), field, width, height)
 
-                            rook_white[i].move(pygame.mouse.get_pos(), field, width, height)
+                                i = int(x / width * 8)
+                                j = int(y / height * 8)
+
+                                if field[i][j] == -1:
+                                    takesWhite(x, y)
+
+                                turn = -1
+                                deselectAll('black')
+                if turn == -1:
+                    for i in range(len(rook_white)):
+                        if rook_white[i].clickedOn(pygame.mouse.get_pos()):
                             deselectAll('white')
+                            rook_white[i].setSelected(True)
 
+                        x, y = pygame.mouse.get_pos()
+                        w, h = width/8, height/8
+                        x = int(x / w) * w
+                        y = int(y / h) * h
 
+                        if rook_white[i].selected:
+                            if rook_white[i].x != x or rook_white[i].y != y:
+
+                                rook_white[i].move(pygame.mouse.get_pos(), field, width, height)
+
+                                i = int(x / width * 8)
+                                j = int(y / height * 8)
+
+                                if field[i][j] == 1:
+                                    takesBlack(x, y)
+
+                                turn = 1
+                                deselectAll('white')
 
         drawBoard()
         for i in range(len(rook_black)):
