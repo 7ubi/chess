@@ -3,9 +3,6 @@ import os
 
 pygame.init()
 
-bishop_black = pygame.image.load(os.path.join('data', 'bishop_black.png')) 
-bishop_white = pygame.image.load(os.path.join('data', 'bishop_white.png')) 
-
 king_black = pygame.image.load(os.path.join('data', 'king_black.png')) 
 king_white = pygame.image.load(os.path.join('data', 'king_white.png')) 
 
@@ -61,7 +58,7 @@ class Rook:
 
 
 
-    def show(self, screen, width, height):
+    def show(self, screen):
     	if self.selected:
     		pygame.draw.rect(screen, pygame.Color(255, 0, 0), (self.x, self.y, self.w, self.h))
 

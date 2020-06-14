@@ -2,6 +2,7 @@ import pygame
 import os
 import sys
 from rook import Rook
+from bishop import Bishop
 
 pygame.init()
 width, height = 400, 400
@@ -12,9 +13,11 @@ clock = pygame.time.Clock()
 
 field = [[0 for x in range(8)] for y in range(8)]
 
-rook_black = [Rook(1, 0, 0, width/8, height/8), Rook(1, 7 * width/8, 0, width / 8, height/8)]
+rook_black = [Rook(1, 0, 0, width / 8, height / 8), Rook(1, 7 * width / 8, 0, width / 8, height / 8)]
+rook_white = [Rook(-1, 0, 7 * height / 8, width / 8, height / 8), Rook(-1, 7 * width / 8, 7 * height / 8, width / 8, height / 8)]
 
-rook_white = [Rook(-1, 0, 7 * height / 8, width/8, height/8), Rook(-1, 7 * width / 8, 7 * height / 8, width/8, height/8)]
+bishop_black = [Bishop(1, 2 * width / 8, 0, width / 8, height / 8), Bishop(1, 5 * width / 8, 0, width / 8, height / 8)]
+bishop_white = [Bishop(-1, 2 * width / 8, 7 * height / 8, width / 8, height / 8), Bishop(-1, 5 * width / 8, 7 * height / 8, width / 8, height / 8)]
 
 turn = -1
 
@@ -59,6 +62,40 @@ def takesWhite(x, y):
             turn = -1
             return
 
+def movePiece(arr, colorNum, colorStr):
+    for i in range(len(arr)):
+        if arr[i].clickedOn(pygame.mouse.get_pos()):
+
+            deselectAll(colorStr)
+            arr[i].setSelected(True)
+
+        x, y = pygame.mouse.get_pos()
+        w, h = width/8, height/8
+        x = int(x / w) * w
+        y = int(y / h) * h
+
+        if arr[i].selected:
+            if arr[i].x != x or arr[i].y != y:
+
+                arr[i].move(pygame.mouse.get_pos(), field, width, height)
+
+                i = int(x / width * 8)
+                j = int(y / height * 8)
+
+                if field[i][j] == -colorNum:
+                    if colorNum == -1:
+                        takesBlack(x, y)
+                    else:
+                        takesWhite(x, y)
+                deselectAll(colorStr)
+                return -colorNum
+                
+    return colorNum
+
+def showPieces(arr):
+    for i in range(len(arr)):
+        arr[i].show(screen)
+
 def main():
     turn = -1
     while True:
@@ -70,59 +107,17 @@ def main():
 
             if event.type == pygame.MOUSEBUTTONUP:
                 if turn == 1:
-                    for i in range(len(rook_black)):
-                        if rook_black[i].clickedOn(pygame.mouse.get_pos()):
-                            deselectAll('black')
-                            rook_black[i].setSelected(True)
-                        x, y = pygame.mouse.get_pos()
-                        w, h = width/8, height/8
-                        x = int(x / w) * w
-                        y = int(y / h) * h
-
-                        if rook_black[i].selected:
-                            if rook_black[i].x != x or rook_black[i].y != y:
-
-                                rook_black[i].move(pygame.mouse.get_pos(), field, width, height)
-
-                                i = int(x / width * 8)
-                                j = int(y / height * 8)
-
-                                if field[i][j] == -1:
-                                    takesWhite(x, y)
-
-                                turn = -1
-                                deselectAll('black')
+                    turn = movePiece(rook_black, 1, 'black')
                 if turn == -1:
-                    for i in range(len(rook_white)):
-                        if rook_white[i].clickedOn(pygame.mouse.get_pos()):
-                            deselectAll('white')
-                            rook_white[i].setSelected(True)
-
-                        x, y = pygame.mouse.get_pos()
-                        w, h = width/8, height/8
-                        x = int(x / w) * w
-                        y = int(y / h) * h
-
-                        if rook_white[i].selected:
-                            if rook_white[i].x != x or rook_white[i].y != y:
-
-                                rook_white[i].move(pygame.mouse.get_pos(), field, width, height)
-
-                                i = int(x / width * 8)
-                                j = int(y / height * 8)
-
-                                if field[i][j] == 1:
-                                    takesBlack(x, y)
-
-                                turn = 1
-                                deselectAll('white')
+                    turn = movePiece(rook_white, -1, 'white')
 
         drawBoard()
-        for i in range(len(rook_black)):
-            rook_black[i].show(screen, width, height)
+        
+        showPieces(rook_black)
+        showPieces(rook_white)
+        showPieces(bishop_black)
+        showPieces(bishop_white)
 
-        for i in range(len(rook_white)):
-            rook_white[i].show(screen, width, height)
         pygame.display.update()
         clock.tick(15)
 
