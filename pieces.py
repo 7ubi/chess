@@ -19,6 +19,9 @@ queen_white = pygame.image.load(os.path.join('data', 'queen_white.png'))
 rook_black = pygame.image.load(os.path.join('data', 'rook_black.png')) 
 rook_white = pygame.image.load(os.path.join('data', 'rook_white.png')) 
 
+bishop_black = pygame.image.load(os.path.join('data', 'bishop_black.png')) 
+bishop_white = pygame.image.load(os.path.join('data', 'bishop_white.png')) 
+
 class Rook(Piece):
     def __init__(self, color, x, y, w, h):
         self.blackImg = rook_black
@@ -30,8 +33,6 @@ class Rook(Piece):
     		return True
     	return False
 
-bishop_black = pygame.image.load(os.path.join('data', 'bishop_black.png')) 
-bishop_white = pygame.image.load(os.path.join('data', 'bishop_white.png')) 
 
 
 class Bishop(Piece):
@@ -47,3 +48,17 @@ class Bishop(Piece):
 		if int(distX) == int(distY):
 			return True
 		return False     
+
+class King(Piece):
+	def __init__(self, color, x, y, w, h):
+		self.blackImg = king_black
+		super().__init__(color, x, y, w, h)
+
+	def check(self, x, y):
+		distX = abs(self.x - x) / self.w
+		distY = abs(self.y - y) / self.h
+
+		if int(distX) == 0 or int(distX) == 1:
+			if int(distY) == 0 or int(distY) == 1:
+				return True
+		return False

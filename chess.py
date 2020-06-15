@@ -3,6 +3,7 @@ import os
 import sys
 from pieces import Rook
 from pieces import Bishop
+from pieces import King
 
 pygame.init()
 width, height = 400, 400
@@ -18,12 +19,14 @@ blackpieces.append(Rook(1, 0, 0, width / 8, height / 8))
 blackpieces.append(Rook(1, 7 * width / 8, 0, width / 8, height / 8))
 blackpieces.append(Bishop(1, 2 * width / 8, 0, width / 8, height / 8))
 blackpieces.append(Bishop(1, 5 * width / 8, 0, width / 8, height / 8))
+blackpieces.append(King(1, 4 * width / 8, 0, width / 8, height / 8))
 
 whitepieces = []
 whitepieces.append(Rook(-1, 0, 7 * height / 8, width / 8, height / 8))
 whitepieces.append(Rook(-1, 7 * width / 8, 7 * height / 8, width / 8, height / 8))
 whitepieces.append(Bishop(-1, 2 * width / 8, 7 * height / 8, width / 8, height / 8))
 whitepieces.append(Bishop(-1, 5 * width / 8, 7 * height / 8, width / 8, height / 8))
+whitepieces.append(King(-1, 4 * width / 8, 7 * height / 8, width / 8, height / 8))
 
 turn = -1
 
@@ -50,7 +53,7 @@ def deselectAll(c):
     if c == 'black':
         for i in range(len(blackpieces)):
             blackpieces[i].setSelected(False)
-            
+
     if c == 'white':
         for i in range(len(whitepieces)):
             whitepieces[i].setSelected(False)
