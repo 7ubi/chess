@@ -13,11 +13,17 @@ clock = pygame.time.Clock()
 
 field = [[0 for x in range(8)] for y in range(8)]
 
-rook_black = [Rook(1, 0, 0, width / 8, height / 8), Rook(1, 7 * width / 8, 0, width / 8, height / 8)]
-rook_white = [Rook(-1, 0, 7 * height / 8, width / 8, height / 8), Rook(-1, 7 * width / 8, 7 * height / 8, width / 8, height / 8)]
+blackpieces = []
+blackpieces.append(Rook(1, 0, 0, width / 8, height / 8))
+blackpieces.append(Rook(1, 7 * width / 8, 0, width / 8, height / 8))
+blackpieces.append(Bishop(1, 2 * width / 8, 0, width / 8, height / 8))
+blackpieces.append(Bishop(1, 5 * width / 8, 0, width / 8, height / 8))
 
-bishop_black = [Bishop(1, 2 * width / 8, 0, width / 8, height / 8), Bishop(1, 5 * width / 8, 0, width / 8, height / 8)]
-bishop_white = [Bishop(-1, 2 * width / 8, 7 * height / 8, width / 8, height / 8), Bishop(-1, 5 * width / 8, 7 * height / 8, width / 8, height / 8)]
+whitepieces = []
+whitepieces.append(Rook(-1, 0, 7 * height / 8, width / 8, height / 8))
+whitepieces.append(Rook(-1, 7 * width / 8, 7 * height / 8, width / 8, height / 8))
+whitepieces.append(Bishop(-1, 2 * width / 8, 7 * height / 8, width / 8, height / 8))
+whitepieces.append(Bishop(-1, 5 * width / 8, 7 * height / 8, width / 8, height / 8))
 
 turn = -1
 
@@ -25,17 +31,12 @@ def defPlayingField(): #black = 1 white = -1 nothing = 0
     global field
     field = [[0 for x in range(8)] for y in range(8)]
 
-    for i in range(len(rook_black)):
-        field[int(rook_black[i].x / width * 8)][int(rook_black[i].y / height * 8)] = 1
+    for i in range(len(blackpieces)):
+        field[int(blackpieces[i].x / width * 8)][int(blackpieces[i].y / height * 8)] = 1
 
-    for i in range(len(bishop_black)):
-        field[int(bishop_black[i].x / width * 8)][int(bishop_black[i].y / height * 8)] = 1
+    for i in range(len(whitepieces)):
+        field[int(whitepieces[i].x / width * 8)][int(whitepieces[i].y / height * 8)] = -1
 
-    for i in range(len(rook_white)):
-        field[int(rook_white[i].x / width * 8)][int(rook_white[i].y / height * 8)] = -1
-
-    for i in range(len(bishop_white)):
-        field[int(bishop_white[i].x / width * 8)][int(bishop_white[i].y / height * 8)] = -1
 
 def drawBoard():
     for i in range(8):
@@ -47,43 +48,26 @@ def drawBoard():
 
 def deselectAll(c):
     if c == 'black':
-        for i in range(len(rook_black)):
-            rook_black[i].setSelected(False)
-
-        for i in range(len(bishop_black)):
-            bishop_black[i].setSelected(False)
-
+        for i in range(len(blackpieces)):
+            blackpieces[i].setSelected(False)
+            
     if c == 'white':
-        for i in range(len(rook_white)):
-            rook_white[i].setSelected(False)
+        for i in range(len(whitepieces)):
+            whitepieces[i].setSelected(False)
 
-        for i in range(len(bishop_white)):
-            bishop_white[i].setSelected(False)
 
 def takesBlack(x, y):
-    for i in range(len(rook_black)):
-        if int(x) == rook_black[i].x and int(y) == rook_black[i].y:
-            rook_black.remove(rook_black[i])
-            turn = 1
-            return
-
-    for i in range(len(bishop_black)):
-        if int(x) == bishop_black[i].x and int(y) == bishop_black[i].y:
-            bishop_black.remove(bishop_black[i])
+    for i in range(len(blackpieces)):
+        if int(x) == blackpieces[i].x and int(y) == blackpieces[i].y:
+            blackpieces.remove(blackpieces[i])
             turn = 1
             return
 
 
 def takesWhite(x, y):
-    for i in range(len(rook_white)):
-        if int(x) == rook_white[i].x and int(y) == rook_white[i].y:
-            rook_white.remove(rook_white[i])
-            turn = -1
-            return
-
-    for i in range(len(bishop_white)):
-        if int(x) == bishop_white[i].x and int(y) == bishop_white[i].y:
-            bishop_white.remove(bishop_white[i])
+    for i in range(len(whitepieces)):
+        if int(x) == whitepieces[i].x and int(y) == whitepieces[i].y:
+            whitepieces.remove(whitepieces[i])
             turn = -1
             return
 
@@ -133,23 +117,16 @@ def main():
 
             if event.type == pygame.MOUSEBUTTONUP:
                 if turn == 1:
-                    turn = movePiece(rook_black, 1, 'black')
-
-                if turn == 1:
-                    turn = movePiece(bishop_black, 1, 'black')
+                    turn = movePiece(blackpieces, 1, 'black')
 
                 if turn == -1:
-                    turn = movePiece(rook_white, -1, 'white')
+                    turn = movePiece(whitepieces, -1, 'white')
 
-                if turn == -1:
-                    turn = movePiece(bishop_white, -1, 'white')
 
         drawBoard()
         
-        showPieces(rook_black)
-        showPieces(rook_white)
-        showPieces(bishop_black)
-        showPieces(bishop_white)
+        showPieces(blackpieces)
+        showPieces(whitepieces)
 
         pygame.display.update()
         clock.tick(15)
