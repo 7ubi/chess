@@ -28,12 +28,10 @@ class Rook(Piece):
         self.whiteImg = rook_white
         super().__init__(color, x, y, w, h)
 
-    def check(self, x, y):
+    def canBePlaced(self, x, y, field):
     	if self.x == x or self.y == y:
     		return True
     	return False
-
-
 
 class Bishop(Piece):
 	def __init__(self, color, x, y, w, h):
@@ -41,7 +39,7 @@ class Bishop(Piece):
 		self.whiteImg = bishop_white
 		super().__init__(color, x, y, w, h)
 
-	def check(self, x, y):
+	def canBePlaced(self, x, y, field):
 		distX = abs(self.x - x)
 		distY = abs(self.y - y)
 		
@@ -55,11 +53,67 @@ class King(Piece):
 		self.whiteImg = king_white
 		super().__init__(color, x, y, w, h)
 
-	def check(self, x, y):
+	def canBePlaced(self, x, y, field):
 		distX = abs(self.x - x) / self.w
 		distY = abs(self.y - y) / self.h
 
 		if int(distX) == 0 or int(distX) == 1:
 			if int(distY) == 0 or int(distY) == 1:
 				return True
+		return False
+
+class Queen(Piece):
+	def __init__(self, color, x, y, w, h):
+		self.blackImg = queen_black
+		self.whiteImg = queen_white
+		super().__init__(color, x, y, w, h)
+
+	def canBePlaced(self, x, y, field):
+		distX = abs(self.x - x)
+		distY = abs(self.y - y)
+
+		if int(distX) == int(distY):
+				return True
+
+		if self.x == x or self.y == y:
+			return True 
+		return False
+
+class Knight(Piece):
+	def __init__(self, color, x, y, w, h):
+		self.blackImg = knight_black
+		self.whiteImg = knight_white
+		super().__init__(color, x, y, w, h)
+
+	def canBePlaced(self, x, y, field):
+		distX = abs(self.x - x) / self.w
+		distY = abs(self.y - y) / self.h
+
+		if distX == 2 or distY == 2:
+			if distX == 1 or distY == 1:
+				return True
+		return False
+
+class Pawn(Piece):
+	def __init__(self, color, x, y, w, h):
+		self.blackImg = pawn_black
+		self.whiteImg = pawn_white
+		self.startX = x
+		self.startY = y
+		super().__init__(color, x, y, w, h)
+
+	def canBePlaced(self, x, y, field):
+		i = int(self.x / self.w * 8 * 8)
+		j = int(self.y / self.h * 8 * 8)
+
+		distX = (self.x - x) / self.w
+		distY = abs(self.y - y) / self.h
+
+		if self.x == self.startX and self.y == self.startY:
+			if distY == 2 and distX == 0:
+				return True
+
+		if distY == 1 and distX == 0:
+			return True
+
 		return False

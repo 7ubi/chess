@@ -18,9 +18,6 @@ class Piece:
 	def setSelected(self, set):
 		self.selected = set
 
-	def check(self, x, y):
-		pass
-
 	def clickedOn(self, pos):
 		x, y = pos
 		if x > self.x and x < self.x + self.w and y > self.y and y < self.y + self.h:
@@ -33,7 +30,7 @@ class Piece:
 			x = int(nx / self.w) * self.w
 			y = int(ny / self.h) * self.h
     		
-			canBePlaced = self.check(x, y)
+			canBePlaced = self.canBePlaced(x, y, field)
 
 			if field[int(x / width * 8)][int(y / height * 8)] == self.color:
 				return False

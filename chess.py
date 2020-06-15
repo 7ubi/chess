@@ -4,6 +4,9 @@ import sys
 from pieces import Rook
 from pieces import Bishop
 from pieces import King
+from pieces import Queen
+from pieces import Knight
+from pieces import Pawn
 
 pygame.init()
 width, height = 400, 400
@@ -20,6 +23,12 @@ blackpieces.append(Rook(1, 7 * width / 8, 0, width / 8, height / 8))
 blackpieces.append(Bishop(1, 2 * width / 8, 0, width / 8, height / 8))
 blackpieces.append(Bishop(1, 5 * width / 8, 0, width / 8, height / 8))
 blackpieces.append(King(1, 4 * width / 8, 0, width / 8, height / 8))
+blackpieces.append(Queen(1, 3 * width / 8, 0, width / 8, height / 8))
+blackpieces.append(Knight(1, width / 8, 0, width / 8, height / 8))
+blackpieces.append(Knight(1, 6 * width / 8, 0, width / 8, height / 8))
+
+for i in range(8):
+    blackpieces.append(Pawn(1, i * width / 8, height / 8, width / 8, height / 8))
 
 whitepieces = []
 whitepieces.append(Rook(-1, 0, 7 * height / 8, width / 8, height / 8))
@@ -27,6 +36,12 @@ whitepieces.append(Rook(-1, 7 * width / 8, 7 * height / 8, width / 8, height / 8
 whitepieces.append(Bishop(-1, 2 * width / 8, 7 * height / 8, width / 8, height / 8))
 whitepieces.append(Bishop(-1, 5 * width / 8, 7 * height / 8, width / 8, height / 8))
 whitepieces.append(King(-1, 4 * width / 8, 7 * height / 8, width / 8, height / 8))
+whitepieces.append(Queen(-1, 3 * width / 8, 7 * height / 8, width / 8, height / 8))
+whitepieces.append(Knight(-1, width / 8, 7 * height / 8, width / 8, height / 8))
+whitepieces.append(Knight(-1, 6 * width / 8, 7 * height / 8, width / 8, height / 8))
+
+for i in range(8):
+    whitepieces.append(Pawn(-1, i * width / 8, 6 * height / 8, width / 8, height / 8))
 
 turn = -1
 
@@ -124,7 +139,6 @@ def main():
 
                 if turn == -1:
                     turn = movePiece(whitepieces, -1, 'white')
-
 
         drawBoard()
         
