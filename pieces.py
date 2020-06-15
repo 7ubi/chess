@@ -52,6 +52,7 @@ class Bishop(Piece):
 class King(Piece):
 	def __init__(self, color, x, y, w, h):
 		self.blackImg = king_black
+		self.whiteImg = king_white
 		super().__init__(color, x, y, w, h)
 
 	def check(self, x, y):
