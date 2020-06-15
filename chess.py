@@ -1,8 +1,8 @@
 import pygame
 import os
 import sys
-from rook import Rook
-from bishop import Bishop
+from pieces import Rook
+from pieces import Bishop
 
 pygame.init()
 width, height = 400, 400
@@ -28,8 +28,14 @@ def defPlayingField(): #black = 1 white = -1 nothing = 0
     for i in range(len(rook_black)):
         field[int(rook_black[i].x / width * 8)][int(rook_black[i].y / height * 8)] = 1
 
+    for i in range(len(bishop_black)):
+        field[int(bishop_black[i].x / width * 8)][int(bishop_black[i].y / height * 8)] = 1
+
     for i in range(len(rook_white)):
         field[int(rook_white[i].x / width * 8)][int(rook_white[i].y / height * 8)] = -1
+
+    for i in range(len(bishop_white)):
+        field[int(bishop_white[i].x / width * 8)][int(bishop_white[i].y / height * 8)] = -1
 
 def drawBoard():
     for i in range(8):
@@ -44,9 +50,15 @@ def deselectAll(c):
         for i in range(len(rook_black)):
             rook_black[i].setSelected(False)
 
+        for i in range(len(bishop_black)):
+            bishop_black[i].setSelected(False)
+
     if c == 'white':
         for i in range(len(rook_white)):
             rook_white[i].setSelected(False)
+
+        for i in range(len(bishop_white)):
+            bishop_white[i].setSelected(False)
 
 def takesBlack(x, y):
     for i in range(len(rook_black)):
@@ -55,10 +67,23 @@ def takesBlack(x, y):
             turn = 1
             return
 
+    for i in range(len(bishop_black)):
+        if int(x) == bishop_black[i].x and int(y) == bishop_black[i].y:
+            bishop_black.remove(bishop_black[i])
+            turn = 1
+            return
+
+
 def takesWhite(x, y):
     for i in range(len(rook_white)):
         if int(x) == rook_white[i].x and int(y) == rook_white[i].y:
             rook_white.remove(rook_white[i])
+            turn = -1
+            return
+
+    for i in range(len(bishop_white)):
+        if int(x) == bishop_white[i].x and int(y) == bishop_white[i].y:
+            bishop_white.remove(bishop_white[i])
             turn = -1
             return
 
@@ -77,7 +102,8 @@ def movePiece(arr, colorNum, colorStr):
         if arr[i].selected:
             if arr[i].x != x or arr[i].y != y:
 
-                arr[i].move(pygame.mouse.get_pos(), field, width, height)
+                if not arr[i].move(pygame.mouse.get_pos(), field, width, height):
+                    continue
 
                 i = int(x / width * 8)
                 j = int(y / height * 8)
@@ -108,8 +134,15 @@ def main():
             if event.type == pygame.MOUSEBUTTONUP:
                 if turn == 1:
                     turn = movePiece(rook_black, 1, 'black')
+
+                if turn == 1:
+                    turn = movePiece(bishop_black, 1, 'black')
+
                 if turn == -1:
                     turn = movePiece(rook_white, -1, 'white')
+
+                if turn == -1:
+                    turn = movePiece(bishop_white, -1, 'white')
 
         drawBoard()
         
