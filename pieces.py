@@ -39,12 +39,10 @@ class Bishop(Piece):
 		super().__init__(color, x, y, w, h)
 
 	def canBePlaced(self, x, y, field):
-		distX = abs(self.x - x)
-		distY = abs(self.y - y)
-		
-		if int(distX) == int(distY):
+		if self.crossMove(x, y, field):
 			return True
-		return False     
+		return False
+		
 
 class King(Piece):
 	def __init__(self, color, x, y, w, h):
@@ -68,10 +66,7 @@ class Queen(Piece):
 		super().__init__(color, x, y, w, h)
 
 	def canBePlaced(self, x, y, field):
-		distX = abs(self.x - x)
-		distY = abs(self.y - y)
-
-		if int(distX) == int(distY):
+		if self.crossMove(x, y, field):
 			return True
 
 		return self.horverMove(x, y, field)

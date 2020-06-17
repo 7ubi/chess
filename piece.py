@@ -40,7 +40,7 @@ class Piece:
                 self.y = y
                 return True
 
-    def horverMove(self, x, y, field):
+    def horverMove(self, x, y, field): # horizontal / vertical move
         if self.y == y:
             d = self.x - x
             i = int(self.x / (self.w * 8) * 8)
@@ -80,6 +80,35 @@ class Piece:
 
             return True
         return False
+
+    def crossMove(self, x, y, field):
+    	dx = self.x - x
+    	dy = self.y - y
+
+    	if abs(dx) != abs(dy):
+    		return False
+
+    	dx1 = dx
+    	if dx < 0:
+    		dx1 = 1
+    	else:
+    		dx1 = -1
+
+    	dy1 = dy
+    	if dy < 0:
+    		dy1 = 1
+    	else:
+    		dy1 = -1
+
+    	sx = int(self.x / (self.w * 8) * 8) + dx1
+    	sy = int(self.y / (self.h * 8) * 8) + dy1
+
+    	end = abs(int(x / (self.w * 8) * 8) - sx)
+
+    	for i in range(0, end):
+    		if field[int(sx + (i * dx1))][int(sy + (i * dy1))] != 0:
+    			return False
+    	return True
 
     def show(self, screen):
         if self.selected:
