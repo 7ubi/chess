@@ -123,6 +123,7 @@ def movePiece(arr, colorNum, colorStr):
 def showPieces(arr):
     for i in range(len(arr)):
         arr[i].show(screen)
+        arr[i].showAllMoves(field, screen)
 
 def main():
     turn = -1

@@ -27,6 +27,9 @@ class Rook(Piece):
         self.blackImg = rook_black
         self.whiteImg = rook_white
         super().__init__(color, x, y, w, h)
+    def showAllMoves(self, field, screen):
+    	if self.selected:
+    		self.showHorVerMove(field, screen)
 
     def canBePlaced(self, x, y, field):
     	return self.horverMove(x, y, field)
@@ -37,6 +40,10 @@ class Bishop(Piece):
 		self.blackImg = bishop_black
 		self.whiteImg = bishop_white
 		super().__init__(color, x, y, w, h)
+
+	def showAllMoves(self, field, screen):
+		if self.selected:
+			self.showAllCrossMoves(field, screen)
 
 	def canBePlaced(self, x, y, field):
 		if self.crossMove(x, y, field):
@@ -49,7 +56,18 @@ class King(Piece):
 		self.blackImg = king_black
 		self.whiteImg = king_white
 		super().__init__(color, x, y, w, h)
-
+	
+	def showAllMoves(self, field, screen):
+		if self.selected:
+			k = int(self.x / (self.w * 8) * 8)
+			m = int(self.y / (self.h * 8) * 8)
+			for i in range(-1, 2):
+				for j in range(-1, 2):
+					if k + i < 0 or k + i > 7 or m + j < 0 or m + j > 7:
+						continue
+					if field[k + i][m + j] != self.color:
+						self.drawRectWithAlpha(0, 255, 0, 100, self.x + self.w * i, self.y + self.h * j, screen)
+	
 	def canBePlaced(self, x, y, field):
 		distX = abs(self.x - x) / self.w
 		distY = abs(self.y - y) / self.h
@@ -64,6 +82,11 @@ class Queen(Piece):
 		self.blackImg = queen_black
 		self.whiteImg = queen_white
 		super().__init__(color, x, y, w, h)
+
+	def showAllMoves(self, field, screen):
+		if self.selected:
+			self.showHorVerMove(field, screen)
+			self.showAllCrossMoves(field, screen)
 
 	def canBePlaced(self, x, y, field):
 		if self.crossMove(x, y, field):
@@ -97,17 +120,21 @@ class Pawn(Piece):
 		super().__init__(color, x, y, w, h)
 
 	def canBePlaced(self, x, y, field):
-		i = int(self.x / self.w * 8 * 8)
-		j = int(self.y / self.h * 8 * 8)
+		i = int(x / (self.w * 8) * 8)
+		j = int(y / (self.h * 8) * 8)
 
 		distX = (self.x - x) / self.w
-		distY = abs(self.y - y) / self.h
+		distY = (self.y - y) / self.h
 
 		if self.x == self.startX and self.y == self.startY:
-			if distY == 2 and distX == 0:
+			if int(distY) == -self.color * 2 and int(distX) == 0 and field[i][j] == 0:
 				return True
 
-		if distY == 1 and distX == 0:
+		if int(distY) == -self.color and int(distX) == 0 and field[i][j] == 0:
 			return True
+
+		if abs(distX) == 1 and int(distY) == -self.color:
+			if field[i][j] == -self.color:
+				return True
 
 		return False
