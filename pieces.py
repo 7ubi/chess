@@ -102,6 +102,23 @@ class Knight(Piece):
 		self.whiteImg = knight_white
 		super().__init__(color, x, y, w, h)
 
+	def showAllMoves(self, field, screen):
+		if self.selected:
+			i = int(self.x / (self.w * 8) * 8)
+			j = int(self.y / (self.h * 8) * 8)
+			for k in range(-2, 3, 4):
+				for m in range(-1, 2, 2):
+					if i + k >= 0 and i + k <= 7:
+						if j + m >= 0 and j + m <= 7:
+							if field[i + k][j + m] != self.color:
+								self.drawRectWithAlpha(0, 255, 0, 100, self.w * (i + k), self.h * (j + m), screen)
+					
+					if i + m >= 0 and i + m <= 7: 
+						if j + k >= 0 and j + k <= 7:
+							if field[i + m][j + k] != self.color:
+								self.drawRectWithAlpha(0, 255, 0, 100, self.w * (i + m), self.h * (j + k), screen)
+
+
 	def canBePlaced(self, x, y, field):
 		distX = abs(self.x - x) / self.w
 		distY = abs(self.y - y) / self.h
@@ -118,6 +135,30 @@ class Pawn(Piece):
 		self.startX = x
 		self.startY = y
 		super().__init__(color, x, y, w, h)
+
+	def showAllMoves(self, field, screen):
+		if not self.selected:
+			return
+
+		i = int(self.x / (self.w * 8) * 8)
+		j = int(self.y / (self.h * 8) * 8)
+
+		for k in range(-1, 2, 2):
+			if i + k < 0 or i + k > 7:
+				continue
+
+			if field[i + k][j + self.color] == -self.color:
+				self.drawRectWithAlpha(0, 255, 0, 100, self.w * (i + k), self.h * (j + self.color), screen)
+	
+		if field[i][j + self.color] == 0:
+			self.drawRectWithAlpha(0, 255, 0, 100, self.w * i, self.h * (j + self.color), screen)
+		else:
+			return
+
+		ny = (j + (2 * self.color)) * self.h 
+		if self.y == self.startY:
+			if field[i][j + (self.color * 2)] == 0:
+				self.drawRectWithAlpha(0, 255, 0, 100, self.w * i, ny, screen)
 
 	def canBePlaced(self, x, y, field):
 		i = int(x / (self.w * 8) * 8)

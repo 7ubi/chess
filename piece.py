@@ -183,3 +183,5 @@ class Piece:
         if self.color == -1:
             screen.blit(pygame.transform.scale(
                 self.whiteImg, (self.w, self.h)), (self.x, self.y))
+
+
