@@ -7,6 +7,7 @@ from pieces import King
 from pieces import Queen
 from pieces import Knight
 from pieces import Pawn
+import math
 
 pygame.init()
 width, height = 400, 400
@@ -18,30 +19,30 @@ clock = pygame.time.Clock()
 field = [[0 for x in range(8)] for y in range(8)]
 
 blackpieces = []
-blackpieces.append(Rook(1, 0, 0, width / 8, height / 8))
-blackpieces.append(Rook(1, 7 * width / 8, 0, width / 8, height / 8))
-blackpieces.append(Bishop(1, 2 * width / 8, 0, width / 8, height / 8))
-blackpieces.append(Bishop(1, 5 * width / 8, 0, width / 8, height / 8))
-blackpieces.append(King(1, 4 * width / 8, 0, width / 8, height / 8))
-blackpieces.append(Queen(1, 3 * width / 8, 0, width / 8, height / 8))
-blackpieces.append(Knight(1, width / 8, 0, width / 8, height / 8))
-blackpieces.append(Knight(1, 6 * width / 8, 0, width / 8, height / 8))
+blackpieces.append(Rook(1, 0, 0, width / 8, height / 8, 50))
+blackpieces.append(Rook(1, 7 * width / 8, 0, width / 8, height / 8, 50))
+blackpieces.append(Bishop(1, 2 * width / 8, 0, width / 8, height / 8, 30))
+blackpieces.append(Bishop(1, 5 * width / 8, 0, width / 8, height / 8, 30))
+blackpieces.append(King(1, 4 * width / 8, 0, width / 8, height / 8, 900))
+blackpieces.append(Queen(1, 3 * width / 8, 0, width / 8, height / 8, 90))
+blackpieces.append(Knight(1, width / 8, 0, width / 8, height / 8, 30))
+blackpieces.append(Knight(1, 6 * width / 8, 0, width / 8, height / 8, 30))
 
 for i in range(8):
-    blackpieces.append(Pawn(1, i * width / 8, height / 8, width / 8, height / 8))
+    blackpieces.append(Pawn(1, i * width / 8, height / 8, width / 8, height / 8, 10))
 
 whitepieces = []
-whitepieces.append(Rook(-1, 0, 7 * height / 8, width / 8, height / 8))
-whitepieces.append(Rook(-1, 7 * width / 8, 7 * height / 8, width / 8, height / 8))
-whitepieces.append(Bishop(-1, 2 * width / 8, 7 * height / 8, width / 8, height / 8))
-whitepieces.append(Bishop(-1, 5 * width / 8, 7 * height / 8, width / 8, height / 8))
-whitepieces.append(King(-1, 4 * width / 8, 7 * height / 8, width / 8, height / 8))
-whitepieces.append(Queen(-1, 3 * width / 8, 7 * height / 8, width / 8, height / 8))
-whitepieces.append(Knight(-1, width / 8, 7 * height / 8, width / 8, height / 8))
-whitepieces.append(Knight(-1, 6 * width / 8, 7 * height / 8, width / 8, height / 8))
+whitepieces.append(Rook(-1, 0, 7 * height / 8, width / 8, height / 8, -50))
+whitepieces.append(Rook(-1, 7 * width / 8, 7 * height / 8, width / 8, height / 8, -50))
+whitepieces.append(Bishop(-1, 2 * width / 8, 7 * height / 8, width / 8, height / 8, -30))
+whitepieces.append(Bishop(-1, 5 * width / 8, 7 * height / 8, width / 8, height / 8, -30))
+whitepieces.append(King(-1, 4 * width / 8, 7 * height / 8, width / 8, height / 8, -900))
+whitepieces.append(Queen(-1, 3 * width / 8, 7 * height / 8, width / 8, height / 8, -90))
+whitepieces.append(Knight(-1, width / 8, 7 * height / 8, width / 8, height / 8, -30))
+whitepieces.append(Knight(-1, 6 * width / 8, 7 * height / 8, width / 8, height / 8, -30))
 
 for i in range(8):
-    whitepieces.append(Pawn(-1, i * width / 8, 6 * height / 8, width / 8, height / 8))
+    whitepieces.append(Pawn(-1, i * width / 8, 6 * height / 8, width / 8, height / 8, -10))
 
 turn = -1
 
@@ -89,22 +90,23 @@ def takesWhite(x, y):
             turn = -1
             return
 
-def movePiece(arr, colorNum, colorStr):
+def movePiece(arr, colorNum, colorStr, pos):
+    x, y = pos
     for i in range(len(arr)):
         if arr[i].clickedOn(pygame.mouse.get_pos()):
 
             deselectAll(colorStr)
             arr[i].setSelected(True)
 
-        x, y = pygame.mouse.get_pos()
+        
         w, h = width/8, height/8
         x = int(x / w) * w
         y = int(y / h) * h
-
+        print(x, y, arr[i].selected)
         if arr[i].selected:
             if arr[i].x != x or arr[i].y != y:
 
-                if not arr[i].move(pygame.mouse.get_pos(), field, width, height):
+                if not arr[i].move((x, y), field, width, height):
                     continue
 
                 i = int(x / width * 8)
@@ -125,6 +127,98 @@ def showPieces(arr):
         arr[i].show(screen)
         arr[i].showAllMoves(field, screen)
 
+def getScore():
+    score = 0
+    for i in range(len(blackpieces)):
+        score += blackpieces[i].score
+
+    for i in range(len(whitepieces)):
+        score += whitepieces[i].score
+    # print(len(blackpieces), len(whitepieces))
+    # print(score)
+    return score
+
+def AIMove(depth):
+    index = 0
+    moveX = 0
+    moveY = 0
+
+
+    m = -math.inf
+    for i in range(len(blackpieces)):
+        move = 0
+        blackpieces[i].getAllMoves(field)
+        x = blackpieces[i].x
+        y = blackpieces[i].y
+        while move < len(blackpieces[i].allMoves):
+            blackpieces[i].makeAllMoves(move, field, whitepieces, takesWhite)
+            score = minimaxi(depth - 1, False)
+            print(score)
+
+            if score > m:
+                m = score
+                index = i
+                moveX = blackpieces[i].x
+                moveY = blackpieces[i].y
+            move += 1
+
+        blackpieces[i].x = x
+        blackpieces[i].y = y
+    blackpieces[index].selected = True
+    # print(moveX, moveY)
+    movePiece(blackpieces, 1, 'black', (moveX, moveY))
+
+def minimaxi(depth, maxi): #black
+    if depth == 0:
+        # print("hey", depth, maxi)
+        return getScore()
+    # print(depth, maxi)
+    m = 0
+    if maxi:
+        m = -10000
+
+        for i in range(len(blackpieces)):
+            move = 0
+            blackpieces[i].getAllMoves(field)
+            x = blackpieces[i].x
+            y = blackpieces[i].y
+            while move < len(blackpieces[i].allMoves):
+                blackpieces[i].makeAllMoves(move, field, whitepieces, takesWhite)
+                score = minimaxi(depth - 1, False)
+                # print(score)
+                # print(blackpieces[i].score)
+                # print("2")
+                if score > m:
+                    m = score
+                move += 1
+
+            blackpieces[i].x = x
+            blackpieces[i].y = y
+    else:
+        m = 10000
+        
+        for i in range(len(whitepieces)):
+            move = 0
+            whitepieces[i].getAllMoves(field)
+            x = whitepieces[i].x
+            y = whitepieces[i].y
+
+            while move < len(whitepieces[i].allMoves):
+                whitepieces[i].makeAllMoves(move, field, blackpieces, takesBlack)
+                # print(i, move)
+                score = minimaxi(depth - 1, True)
+                # print(score)
+                # print(blackpieces[i].score)
+                # print("hey")
+                if score < m:
+                    m = score
+
+                move += 1
+            whitepieces[i].x = x
+            whitepieces[i].y = y
+    return m
+
+
 def main():
     turn = -1
     while True:
@@ -135,17 +229,23 @@ def main():
                 sys.exit()
 
             if event.type == pygame.MOUSEBUTTONUP:
-                if turn == 1:
-                    turn = movePiece(blackpieces, 1, 'black')
+                # if turn == 1:
+                #     turn = movePiece(blackpieces, 1, 'black')
 
                 if turn == -1:
-                    turn = movePiece(whitepieces, -1, 'white')
+                    turn = movePiece(whitepieces, -1, 'white', pygame.mouse.get_pos())
 
         drawBoard()
         
+        if turn == 1:
+            print("hey")
+            AIMove(2)
+            turn = -1
+
+
         showPieces(blackpieces)
         showPieces(whitepieces)
-
+        
         pygame.display.update()
         clock.tick(15)
 
