@@ -77,7 +77,6 @@ def deselectAll(c):
 
 
 def takesBlack(x, y):
-    print("nice")
     for i in range(len(blackpieces)):
         if int(x) == blackpieces[i].x and int(y) == blackpieces[i].y:
             blackpieces.remove(blackpieces[i])
@@ -85,12 +84,9 @@ def takesBlack(x, y):
             return
 
 
-def takesWhite(x, y):
-    # print(len(whitepieces))
+def takesWhite(x, y):    
     for i in range(len(whitepieces)):
-        print(whitepieces[i].x, x, whitepieces[i].y, y, i)
         if int(x) == int(whitepieces[i].x) and int(y) == int(whitepieces[i].y):
-            print("hey")
             whitepieces.remove(whitepieces[i])
             turn = -1
             return
@@ -107,7 +103,6 @@ def movePiece(arr, colorNum, colorStr, pos):
         w, h = width/8, height/8
         x = int(x / w) * w
         y = int(y / h) * h
-        # print(x, y, arr[i].selected)
         if arr[i].selected:
             if arr[i].x != x or arr[i].y != y:
 
@@ -132,108 +127,6 @@ def showPieces(arr):
         arr[i].show(screen)
         arr[i].showAllMoves(field, screen)
 
-def getScore():
-    score = 0
-    for i in range(len(blackpieces)):
-        score += blackpieces[i].score
-
-    for i in range(len(whitepieces)):
-        score += whitepieces[i].score
-    # print(len(blackpieces), len(whitepieces))
-    if score != 0:
-        print(score)
-    return score
-
-def AIMove(depth):
-    index = 0
-    moveX = 0
-    moveY = 0
-
-
-    m = -math.inf
-    for i in range(len(blackpieces)):
-        
-        blackpieces[i].getAllMoves(field)
-        x = blackpieces[i].x
-        y = blackpieces[i].y
-        for move in range(len(blackpieces[i].allMoves)):
-            temp = []
-            for j in range(len(whitepieces)):
-                temp.append(whitepieces[j])
-
-            blackpieces[i].makeAllMoves(move, field)
-            score = minimaxi(depth - 1, False)
-            whitepieces.clear()
-            for j in range(len(temp)):
-                whitepieces.append(temp[j])
-            if score > m:
-                m = score
-                index = i
-                moveX = blackpieces[i].x
-                moveY = blackpieces[i].y
-
-        blackpieces[i].x = x
-        blackpieces[i].y = y
-    blackpieces[index].selected = True
-    # print(moveX, moveY)
-    movePiece(blackpieces, 1, 'black', (moveX, moveY))
-
-def minimaxi(depth, maxi): #black
-    if depth == 0:
-        # print("hey", depth, maxi)
-        return getScore()
-    # print(depth, maxi)
-    m = 0
-    if maxi:
-        m = -10000
-
-        for i in range(len(blackpieces)):
-            
-            blackpieces[i].getAllMoves(field)
-            x = blackpieces[i].x
-            y = blackpieces[i].y
-            for move in range(len(blackpieces[i].allMoves)):
-                temp = []
-                for j in range(len(whitepieces)):
-                    temp.append(whitepieces[j])
-                blackpieces[i].makeAllMoves(move, field)
-                score = minimaxi(depth - 1, False)
-                whitepieces.clear()
-                for j in range(len(temp)):
-                    whitepieces.append(temp[j])
-                if score > m:
-                    m = score
-
-            blackpieces[i].x = x
-            blackpieces[i].y = y
-    else:
-        m = 10000
-        # print(len(whitepieces))
-        for i in range(len(whitepieces)):
-            if i > len(whitepieces):
-                break
-            whitepieces[i].getAllMoves(field)
-            x = whitepieces[i].x
-            y = whitepieces[i].y
-
-            for move in range(len(whitepieces[i].allMoves)):
-                whitepieces[i].makeAllMoves(move, field)
-                temp = []
-
-                for j in range(len(blackpieces)):
-                    temp.append(blackpieces[j])
-
-                score = minimaxi(depth - 1, True)
-                
-                if score < m:
-                    m = score
-                blackpieces.clear()
-                for j in range(len(temp)):
-                    blackpieces.append(temp[j])
-            whitepieces[i].x = x
-            whitepieces[i].y = y
-    return m
-
 
 def main():
     turn = -1
@@ -245,18 +138,15 @@ def main():
                 sys.exit()
 
             if event.type == pygame.MOUSEBUTTONUP:
-                # if turn == 1:
-                #     turn = movePiece(blackpieces, 1, 'black')
+                if turn == 1:
+                    turn = movePiece(blackpieces, 1, 'black', pygame.mouse.get_pos())
 
                 if turn == -1:
                     turn = movePiece(whitepieces, -1, 'white', pygame.mouse.get_pos())
 
         drawBoard()
         
-        if turn == 1:
-            # print("hey")
-            AIMove(3)
-            turn = -1
+        
 
 
         showPieces(blackpieces)

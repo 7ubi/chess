@@ -46,8 +46,6 @@ class Piece:
     def showAllMoves(self, field, screen):
         pass
 
-    def getAllMoves(self, field):
-    	pass
 
     def horverMove(self, x, y, field):  # horizontal / vertical move
         if self.y == y:
@@ -95,39 +93,6 @@ class Piece:
         s.fill((r, g, b))           # this fills the entire surface
         screen.blit(s, (x, y))
 
-    def getHorVerMove(self, field):
-        a = 100
-        for d in range(-1, 2, 2):
-        	for i in range(1, 8):
-        		j = int(self.x / (self.w * 8) * 8) + (i * d)
-        		m = int(self.y / (self.h * 8) * 8)
-
-        		if j < 0 or j > 7:
-        			break
-
-        		if field[j][m] == 0:
-        			self.allMoves.append([j * self.w, m * self.h])
-        		elif field[j][m] == self.color:
-        			break
-        		elif field[j][m] == -self.color:
-        			self.allMoves.append([j * self.w, m * self.h])
-        			break
-
-        	for i in range(1, 8):
-        		j = int(self.x / (self.w * 8) * 8)
-        		m = int(self.y / (self.h * 8) * 8) + (i * d)
-
-        		if m < 0 or m > 7:
-        			break
-
-        		if field[j][m] == 0:
-        			self.allMoves.append([j * self.w, m * self.h])
-        		elif field[j][m] == self.color:
-        			break
-        		elif field[j][m] == -self.color:
-        			self.allMoves.append([j * self.w, m * self.h])
-        			break
-
     def showHorVerMove(self, field, screen):
         a = 100
         for d in range(-1, 2, 2):
@@ -161,25 +126,6 @@ class Piece:
         			self.drawRectWithAlpha(0, 255, 0, a, j * self.w, m * self.h, screen)
         			break
 
-    def getAllCrossMoves(self, field):
-    	a = 100
-    	for d in range(-1, 2, 2):
-    		for d1 in range(-1, 2, 2):
-    			for i in range(1, 8):
-    				j = int(self.x / (self.w * 8) * 8) + (i * d)
-    				k = int(self.y / (self.h * 8) * 8) + (i * d1)
-
-    				if j < 0 or k < 0 or j > 7 or k > 7:
-    					break
-
-    				if field[j][k] == 0:
-    					self.allMoves.append([j * self.w, k * self.h])
-    				elif field[j][k] == self.color:
-    					break
-    				elif field[j][k] == -self.color:
-    					self.allMoves.append([j * self.w, k * self.h])
-    					break
-
     def showAllCrossMoves(self, field, screen):
     	a = 100
     	for d in range(-1, 2, 2):
@@ -199,23 +145,6 @@ class Piece:
     					self.drawRectWithAlpha(0, 255, 0, a, j * self.w, k * self.h, screen)
     					break
 
-    def makeAllMoves(self, i, field):
-    	print(self.x, self.y)
-    	self.x = self.allMoves[i][0]
-    	self.y = self.allMoves[i][1]
-
-    	i = int(self.x / (self.w * 8) * 8)
-    	j = int(self.y / (self.h * 8) * 8)
-    	# print(field[i][j], i, j)
-    	if field[i][j] == -self.color:
-    		print(self.color)
-    		if self.color == 1:
-    			from chess import takesWhite
-    			takesWhite(self.x, self.y)
-    		else:
-    			from chess import takesBlack
-    			takesBlack(self.x, self.y)
-            
     def crossMove(self, x, y, field):
         dx = self.x - x
         dy = self.y - y
@@ -257,5 +186,3 @@ class Piece:
         if self.color == -1:
             screen.blit(pygame.transform.scale(
                 self.whiteImg, (self.w, self.h)), (self.x, self.y))
-
-
