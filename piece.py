@@ -1,5 +1,6 @@
 import pygame
 
+
 pygame.init()
 
 
@@ -198,7 +199,8 @@ class Piece:
     					self.drawRectWithAlpha(0, 255, 0, a, j * self.w, k * self.h, screen)
     					break
 
-    def makeAllMoves(self, i, field, otherpieces, takesOther):
+    def makeAllMoves(self, i, field):
+    	print(self.x, self.y)
     	self.x = self.allMoves[i][0]
     	self.y = self.allMoves[i][1]
 
@@ -206,8 +208,13 @@ class Piece:
     	j = int(self.y / (self.h * 8) * 8)
     	# print(field[i][j], i, j)
     	if field[i][j] == -self.color:
-    		print("hlep")
-    		takesOther(self.x, self.y)
+    		print(self.color)
+    		if self.color == 1:
+    			from chess import takesWhite
+    			takesWhite(self.x, self.y)
+    		else:
+    			from chess import takesBlack
+    			takesBlack(self.x, self.y)
             
     def crossMove(self, x, y, field):
         dx = self.x - x

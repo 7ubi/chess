@@ -8,6 +8,7 @@ from pieces import Queen
 from pieces import Knight
 from pieces import Pawn
 import math
+import copy
 
 pygame.init()
 width, height = 400, 400
@@ -76,6 +77,7 @@ def deselectAll(c):
 
 
 def takesBlack(x, y):
+    print("nice")
     for i in range(len(blackpieces)):
         if int(x) == blackpieces[i].x and int(y) == blackpieces[i].y:
             blackpieces.remove(blackpieces[i])
@@ -84,8 +86,11 @@ def takesBlack(x, y):
 
 
 def takesWhite(x, y):
+    # print(len(whitepieces))
     for i in range(len(whitepieces)):
-        if int(x) == whitepieces[i].x and int(y) == whitepieces[i].y:
+        print(whitepieces[i].x, x, whitepieces[i].y, y, i)
+        if int(x) == int(whitepieces[i].x) and int(y) == int(whitepieces[i].y):
+            print("hey")
             whitepieces.remove(whitepieces[i])
             turn = -1
             return
@@ -102,7 +107,7 @@ def movePiece(arr, colorNum, colorStr, pos):
         w, h = width/8, height/8
         x = int(x / w) * w
         y = int(y / h) * h
-        print(x, y, arr[i].selected)
+        # print(x, y, arr[i].selected)
         if arr[i].selected:
             if arr[i].x != x or arr[i].y != y:
 
@@ -135,7 +140,8 @@ def getScore():
     for i in range(len(whitepieces)):
         score += whitepieces[i].score
     # print(len(blackpieces), len(whitepieces))
-    # print(score)
+    if score != 0:
+        print(score)
     return score
 
 def AIMove(depth):
@@ -146,21 +152,25 @@ def AIMove(depth):
 
     m = -math.inf
     for i in range(len(blackpieces)):
-        move = 0
+        
         blackpieces[i].getAllMoves(field)
         x = blackpieces[i].x
         y = blackpieces[i].y
-        while move < len(blackpieces[i].allMoves):
-            blackpieces[i].makeAllMoves(move, field, whitepieces, takesWhite)
-            score = minimaxi(depth - 1, False)
-            print(score)
+        for move in range(len(blackpieces[i].allMoves)):
+            temp = []
+            for j in range(len(whitepieces)):
+                temp.append(whitepieces[j])
 
+            blackpieces[i].makeAllMoves(move, field)
+            score = minimaxi(depth - 1, False)
+            whitepieces.clear()
+            for j in range(len(temp)):
+                whitepieces.append(temp[j])
             if score > m:
                 m = score
                 index = i
                 moveX = blackpieces[i].x
                 moveY = blackpieces[i].y
-            move += 1
 
         blackpieces[i].x = x
         blackpieces[i].y = y
@@ -178,42 +188,48 @@ def minimaxi(depth, maxi): #black
         m = -10000
 
         for i in range(len(blackpieces)):
-            move = 0
+            
             blackpieces[i].getAllMoves(field)
             x = blackpieces[i].x
             y = blackpieces[i].y
-            while move < len(blackpieces[i].allMoves):
-                blackpieces[i].makeAllMoves(move, field, whitepieces, takesWhite)
+            for move in range(len(blackpieces[i].allMoves)):
+                temp = []
+                for j in range(len(whitepieces)):
+                    temp.append(whitepieces[j])
+                blackpieces[i].makeAllMoves(move, field)
                 score = minimaxi(depth - 1, False)
-                # print(score)
-                # print(blackpieces[i].score)
-                # print("2")
+                whitepieces.clear()
+                for j in range(len(temp)):
+                    whitepieces.append(temp[j])
                 if score > m:
                     m = score
-                move += 1
 
             blackpieces[i].x = x
             blackpieces[i].y = y
     else:
         m = 10000
-        
+        # print(len(whitepieces))
         for i in range(len(whitepieces)):
-            move = 0
+            if i > len(whitepieces):
+                break
             whitepieces[i].getAllMoves(field)
             x = whitepieces[i].x
             y = whitepieces[i].y
 
-            while move < len(whitepieces[i].allMoves):
-                whitepieces[i].makeAllMoves(move, field, blackpieces, takesBlack)
-                # print(i, move)
+            for move in range(len(whitepieces[i].allMoves)):
+                whitepieces[i].makeAllMoves(move, field)
+                temp = []
+
+                for j in range(len(blackpieces)):
+                    temp.append(blackpieces[j])
+
                 score = minimaxi(depth - 1, True)
-                # print(score)
-                # print(blackpieces[i].score)
-                # print("hey")
+                
                 if score < m:
                     m = score
-
-                move += 1
+                blackpieces.clear()
+                for j in range(len(temp)):
+                    blackpieces.append(temp[j])
             whitepieces[i].x = x
             whitepieces[i].y = y
     return m
@@ -238,8 +254,8 @@ def main():
         drawBoard()
         
         if turn == 1:
-            print("hey")
-            AIMove(2)
+            # print("hey")
+            AIMove(3)
             turn = -1
 
 
@@ -248,5 +264,5 @@ def main():
         
         pygame.display.update()
         clock.tick(15)
-
-main()
+if __name__ == "__main__":
+    main()
